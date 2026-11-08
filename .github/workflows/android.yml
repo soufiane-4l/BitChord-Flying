@@ -40,7 +40,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build Debug APK
-      run: ./gradlew assembleProdDebug
+      run: ./gradlew assembleDevDebug
 
     - name: Collect APKs
       run: |
