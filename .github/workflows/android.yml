@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-prod-release:
     runs-on: ubuntu-latest
@@ -39,8 +42,16 @@ jobs:
     - name: Build Debug APK
       run: ./gradlew assembleProdDebug
 
-    - name: Upload APK Artifact
-      uses: actions/upload-artifact@v4
+    - name: Collect APKs
+      run: |
+        mkdir -p out
+        find app/build/outputs/apk -name '*.apk' -exec cp {} out/ \;
+        ls -la out
+
+    - name: Publish release
+      uses: softprops/action-gh-release@v2
       with:
-        name: bitchord-prod-debug
-        path: app/build/outputs/apk/**/*.apk
+        tag_name: build-${{ github.run_number }}
+        name: Debug build ${{ github.run_number }}
+        prerelease: true
+        files: out/*.apk
